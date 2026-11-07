@@ -1,0 +1,384 @@
+[
+  {
+    "annotations": {},
+    "description": "为自己的草稿生成一次性图片上传页；把链接交给用户上传，完成后 get_draft 读取 media_ids。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "draft_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "draft_id"
+      ],
+      "additionalProperties": false
+    },
+    "name": "create_media_upload"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "读取自己的草稿、版本与发布状态。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "draft_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "draft_id"
+      ],
+      "additionalProperties": false
+    },
+    "name": "get_draft"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "登录后获取平台固定类别和热帖；没有热度数据时明确返回最新帖子。发帖、搜索和热帖目前免费。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "name": "get_home"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "读取已展示机会详情。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "post_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "additionalProperties": false
+    },
+    "name": "get_opportunity"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "读取自己的校园资料。",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "get_profile"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "读取当前发布规则和真实图片能力；发布前获取 policy version 与各字段限制。",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "get_publishing_rules"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "查询后台维护且当前开放的一级类别和二级技能，用户只能选择，不可修改。",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_categories"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "列出自己的草稿。",
+    "inputSchema": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "name": "list_drafts"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true
+    },
+    "description": "发布用户明确要求发布的草稿；需最新 expected_version、policy_version、confirmed=true。反馈类别开放不代表同意发布。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "draft_id": {
+          "type": "string"
+        },
+        "expected_version": {
+          "type": "integer"
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "confirmed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "request_id",
+        "draft_id",
+        "expected_version",
+        "policy_version",
+        "confirmed"
+      ],
+      "additionalProperties": false
+    },
+    "name": "publish_draft"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true
+    },
+    "description": "按用户意愿保存或修改自己的草稿；不自动发布。新建不填 draft_id、expected_version=0；更新带当前版本和完整content，尚未明确的内容可留空。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "draft_id": {
+          "type": "string"
+        },
+        "expected_version": {
+          "type": "integer"
+        },
+        "content": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "category": {
+              "type": "string"
+            },
+            "skill": {
+              "type": "string"
+            },
+            "location": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "integer"
+            },
+            "offer": {
+              "type": "string"
+            },
+            "need": {
+              "type": "string"
+            },
+            "media_ids": {
+              "type": [
+                "null",
+                "array"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "title",
+            "description",
+            "category",
+            "skill",
+            "location",
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "request_id",
+        "expected_version",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "name": "save_draft"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "按关键词、地区、一级类别或二级技能查询和推荐。Rust 排序，默认20条、最多50条。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "skill": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "interests": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": {
+                "type": "string"
+              },
+              "skill": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "category"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "name": "search_opportunities"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true
+    },
+    "description": "设置大学资料，发布前须填写。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "type": "string"
+        },
+        "university": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "university"
+      ],
+      "additionalProperties": false
+    },
+    "name": "set_campus_profile"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "只校验自己的已保存草稿及绑定图片。上传或修改后重新 get_draft 和 validate_draft，发布使用最新 expected_version 与 policy_version。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "draft_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "draft_id"
+      ],
+      "additionalProperties": false
+    },
+    "name": "validate_draft"
+  },
+  {
+    "annotations": {
+      "idempotentHint": true,
+      "readOnlyHint": true
+    },
+    "description": "只校验尚未保存的内容，不发布、不创建类别；返回具体问题和 policy_version。已保存草稿（含绑定图片）使用 validate_draft。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "skill": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "integer"
+        },
+        "offer": {
+          "type": "string"
+        },
+        "need": {
+          "type": "string"
+        },
+        "media_ids": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "category",
+        "skill",
+        "location",
+        "kind"
+      ],
+      "additionalProperties": false
+    },
+    "name": "validate_post"
+  }
+]

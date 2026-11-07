@@ -1,0 +1,46 @@
+{
+  "name": "dsh-dageban",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "在 DeepSeek Harness 通过邮箱登录搭个伴，查看类别与热帖、搜索和发布技能合作信息。",
+  "main": "index.mjs",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "bridge.mjs",
+    "auth.mjs",
+    "tools.json",
+    "cordis.patch.yml",
+    "README.md",
+    "PRIVACY.md",
+    "LICENSE",
+    "assets/"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "mcp",
+    "dageban"
+  ],
+  "author": "Y1le",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Y1le/dsh-dageban.git"
+  },
+  "engines": {
+    "node": ">=24.9",
+    "dsh": ">=0.2.0 <0.3.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-mcp-client": ">=0.2.0 <0.3.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
